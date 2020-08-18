@@ -1,43 +1,52 @@
-document.querySelector(".song-content").style.display = "none";
-    const songName = document.querySelector(".song-name");
-    const search = document.querySelector(".search-btn");
-    const lyricsName = document.querySelectorAll(".lyrics-name");
-    const authorName = document.querySelectorAll(".album-title");
-    const api = "https://api.lyrics.ovh/suggest/";
-    const lyricApi = "https://api.lyrics.ovh/v1/";
-
-    search.addEventListener("click", function () {
-      document.querySelector(".song-content").style.display = "block"
-      fetch(`${api} ${songName.value}`)
-        .then(res => res.json())
-        .then(info => {
-          const song = info.data
-          console.log(song)
-          for (let i = 0; i < 10; i++) {
-            var titleSong = song[i].title
-            lyricsName[i].innerText = titleSong
-            var albumTitle = song[i].artist.name
-            authorName[i].innerText = albumTitle
-          }
-        })
-
+function showSongs(){
+  const songName = document.querySelector(".song-name");
+  const api = "https://api.lyrics.ovh/suggest/";
+  fetch(`${api} ${songName.value}`)
+    .then(res => res.json())
+    .then(info => {
+      const songContent = document.querySelector(".search-result")
+      const song = info.data
+      //console.log(song)
+      for (let i = 0; i < 10; i++) {
+      const titleSong = song[i].title;
+      const albumTitle = song[i].artist.name;
+      const div = document.createElement("div");
+      div.innerHTML = `<div class="single-result row align-items-center my-3 p-3">
+      <div class="col-md-9">
+        <h3 class="lyrics-name">${titleSong}</h3>
+        <p class="author lead">Album by
+          <span class="album-title">${albumTitle}</span></p>
+      </div>
+      <div class="col-md-3 text-md-right text-center">
+        <button onclick="lyricsDetails('${albumTitle}','${titleSong}')" class="btn btn-success">Get Lyrics</button>
+      </div>
+    </div>`
+    songContent.appendChild(div)
+      } 
     })
-    function lyricsDetails(event) {
-      const lyricData = document.querySelector(".single-lyrics")
-      const getArtist = event.target.parentNode.parentNode.children[0].lastElementChild.lastChild.innerText;
-      const artist = getArtist.split(" ").join("")
-      const getTitle = event.target.parentNode.parentNode.children[0].childNodes[1].innerText;
-      const title = getTitle.split(" ").join("")
-      fetch(`https://api.lyrics.ovh/v1/${artist}/${title}`)
-        .then(res => res.json())
-        .then(data => {
-          console.log(data)
-          if (data.error) {
-            alert("not found")
-          }
-          else {
-            lyricData.innerText = data.lyrics
-          }
-         
-        })
-    }
+}
+function lyricsDetails(artist,title){
+    const lyricData = document.getElementById("lyrics");
+    fetch(`https://api.lyrics.ovh/v1/${artist}/${title}`)
+    .then(res => res.json())
+    .then(data => {
+      if(data.error){
+        lyricData.innerHTML =`<div class="single-lyrics text-center">
+        <button class="btn go-back">&lsaquo;</button>
+        <h2 class="text-success mb-4">${artist} - ${title}</h2>
+        <pre class="lyric text-white">
+        "OOps! Lyrics Not found 😞 "
+        </pre>
+        <div>`
+      }
+      else{
+        lyricData.innerHTML =`<div class="single-lyrics text-center">
+        <button class="btn go-back">&lsaquo;</button>
+        <h2 class="text-success mb-4">${artist} - ${title}</h2>
+        <pre class="lyric text-white">
+        ${data.lyrics}
+        </pre>
+        <div>`;
+      }
+     })
+}
