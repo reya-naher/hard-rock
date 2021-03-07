@@ -18,9 +18,10 @@ body{
     padding: 9px 20px;
 }
 
-.btn-privious{
+.btn-previous{
     background: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+    color: #28a745;
+    font-weight: bold;
 }
 .navbar-toggler {
     border: none;
@@ -38,7 +39,14 @@ body{
     background: rgba(255, 255, 255, 0.2);
     border-radius: 15px;
 }
+.song-img{
+  float: left;
+  margin-right: 20px;
+}
 .album-title{
   color: #28a745;
   font-weight: bold;
+}
+.lyrics-content{
+  margin-left: 200px;
 }
